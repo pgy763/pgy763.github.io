@@ -1,1 +1,354 @@
-<img width="2544" height="1315" alt="image" src="https://github.com/user-attachments/assets/19ed8eb6-e50a-4047-a8e0-a86af52caedd" />
+[Uploading prompt-engineering-guide.html…]()
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>提示词工程完全指南 — 让 AI 真正听懂你</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f0f0f3; color: #1a1a1a; line-height: 1.85; padding: 0;
+  }
+  .doc {
+    max-width: 820px; margin: 0 auto; background: #fff;
+    box-shadow: 0 0 40px rgba(0,0,0,0.08); overflow: hidden;
+  }
+  .cover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white; padding: 56px 48px; text-align: center;
+  }
+  .cover .tag {
+    display: inline-block; background: rgba(255,255,255,0.2);
+    padding: 4px 16px; border-radius: 20px; font-size: 13px; margin-bottom: 18px; letter-spacing: 1px;
+  }
+  .cover h1 { font-size: 30px; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; }
+  .cover .subtitle { font-size: 15px; opacity: 0.9; }
+  .cover .meta { font-size: 13px; opacity: 0.7; margin-top: 16px; }
+  .content { padding: 36px 44px 48px; }
+  h2 {
+    font-size: 21px; font-weight: 700; margin-top: 36px; margin-bottom: 14px;
+    color: #1a1a1a; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0;
+  }
+  h2 .num {
+    display: inline-block; width: 28px; height: 28px; background: #667eea;
+    color: white; border-radius: 6px; text-align: center; line-height: 28px;
+    font-size: 15px; margin-right: 8px; vertical-align: middle;
+  }
+  h3 { font-size: 16px; font-weight: 600; margin-top: 22px; margin-bottom: 8px; color: #333; }
+  p { font-size: 15px; color: #444; margin-bottom: 12px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { font-size: 15px; color: #444; margin-bottom: 5px; }
+  strong { color: #1a1a1a; }
+  .ic { background: #f1f5f9; color: #be123c; padding: 2px 6px; border-radius: 4px; font-size: 13px; font-family: monospace; }
+  pre {
+    background: #1e293b; color: #e2e8f0; border-radius: 10px;
+    padding: 16px 20px; overflow-x: auto; margin: 12px 0; font-size: 13.5px; line-height: 1.7;
+  }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  .card { border-radius: 10px; padding: 16px 18px; font-size: 14px; }
+  .card-bad { background: #fef2f2; border: 1px solid #fecaca; }
+  .card-good { background: #ecfdf5; border: 1px solid #bbf7d0; }
+  .card .label { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .card-bad .label { color: #dc2626; }
+  .card-good .label { color: #16a34a; }
+  .card pre { margin: 6px 0 0; padding: 10px 12px; font-size: 12px; }
+  .callout { border-radius: 10px; padding: 14px 18px; margin: 14px 0; font-size: 14px; }
+  .callout .t { font-weight: 700; margin-bottom: 4px; font-size: 14px; }
+  .c-info { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af; }
+  .c-warn { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+  .c-tip { background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; }
+  .quote {
+    border-left: 4px solid #667eea; padding: 12px 20px; margin: 14px 0;
+    background: #f8f9fc; font-size: 15px; color: #555; font-style: italic;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+  th { background: #f8fafc; text-align: left; padding: 10px 14px; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+  td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; color: #444; }
+  .footer { text-align: center; padding: 32px; color: #aaa; font-size: 13px; background: #f8f9fc; }
+  @media (max-width: 640px) {
+    .compare { grid-template-columns: 1fr; }
+    .content { padding: 24px 20px; }
+    .cover { padding: 40px 24px; }
+    .cover h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+  <div class="cover">
+    <span class="tag">AI 实用指南</span>
+    <h1>提示词工程完全指南</h1>
+    <p class="subtitle">让 AI 真正听懂你说的每一句话</p>
+    <p class="meta">2026.08 · 图文科普 · 适合所有人阅读</p>
+  </div>
+
+  <div class="content">
+
+    <div class="quote">
+      "同一个 AI，有人用它写出爆款文章，有人用它得到一堆废话。差距不在 AI，在于你怎么跟它说话。"
+    </div>
+
+    <!-- ===== 1 ===== -->
+    <h2><span class="num">1</span>什么是提示词工程？</h2>
+
+    <p><strong>提示词工程（Prompt Engineering）</strong>，简单说就是<strong>"跟 AI 沟通的技巧"</strong>。</p>
+
+    <p>你每天用 ChatGPT、通义千问、Kimi、豆包这些 AI 工具时，输入框里打的那段话，就叫<strong>提示词（Prompt）</strong>。同样一个 AI 模型，你给它不同的提示词，它给出的回答天差地别。</p>
+
+    <p>打个比方：AI 就像一个能力极强、但没有常识的实习生。你跟他说"帮我写篇文章"，他可能给你一篇流水账；但如果你说"帮我写一篇面向 25-35 岁程序员的 AI 科普文章，语气幽默，1500 字左右，分三个小节，开头用一个生活场景引入"，他就能给你一个像样的结果。</p>
+
+    <p>提示词工程，就是研究<strong>怎么把你的需求精确地传达给 AI</strong>，让它输出的结果最大化满足你的期望。这是一门"语言艺术"，也是使用 AI 最核心的技能。</p>
+
+    <!-- ===== 2 ===== -->
+    <h2><span class="num">2</span>为什么你必须学会它？</h2>
+
+    <p>2026 年了，AI 已经不是新鲜事。真正拉开人与人差距的，不是"谁用了 AI"，而是<strong>"谁用得好"</strong>。</p>
+
+    <ul>
+      <li><strong>效率差距</strong>：同样让 AI 写周报，有人 30 秒搞定，有人改了 5 遍还不满意</li>
+      <li><strong>质量差距</strong>：同样让 AI 写代码，有人直接能用，有人还要大改</li>
+      <li><strong>能力差距</strong>：会提示词的人，能让 AI 帮做数据分析、做商业策划、甚至做心理辅导</li>
+    </ul>
+
+    <p>而且，提示词工程<strong>不需要编程基础</strong>。只要你会说人话、会表达需求，就能学好。</p>
+
+    <div class="callout c-info">
+      <div class="t">一句话总结</div>
+      AI 时代最重要的技能不是写代码，而是<strong>会提问</strong>。提示词工程就是"提问的艺术"。
+    </div>
+
+    <!-- ===== 3 ===== -->
+    <h2><span class="num">3</span>核心原则：CLEAR 法则</h2>
+
+    <p>好的提示词，一般符合这 5 个要素，我把它总结成 <strong>CLEAR 法则</strong>：</p>
+
+    <table>
+      <tr><th style="width:80px;">字母</th><th style="width:100px;">含义</th><th>说明</th></tr>
+      <tr><td><strong>C</strong></td><td>Context（背景）</td><td>交代清楚你为什么要问这个问题，你在什么场景下需要这个答案</td></tr>
+      <tr><td><strong>L</strong></td><td>Length（长度）</td><td>告诉 AI 你期望多长多短，50 字还是 2000 字</td></tr>
+      <tr><td><strong>E</strong></td><td>Example（示例）</td><td>给一个参考样本，AI 模仿能力极强</td></tr>
+      <tr><td><strong>A</strong></td><td>Audience（受众）</td><td>说清楚给谁看的，小学生还是行业专家</td></tr>
+      <tr><td><strong>R</strong></td><td>Role（角色）</td><td>让 AI 扮演什么身份，产品经理？律师？还是脱口秀演员？</td></tr>
+    </table>
+
+    <div class="callout c-tip">
+      <div class="t">记忆口诀</div>
+      先说<strong>谁在问</strong>（背景）→ 再说<strong>要什么</strong>（任务）→ 然后<strong>给榜样</strong>（示例）→ 告诉<strong>给谁看</strong>（受众）→ 别忘了<strong>多长</strong>（长度）
+    </div>
+
+    <!-- ===== 4 ===== -->
+    <h2><span class="num">4</span>实战对比：菜鸟 vs 高手</h2>
+
+    <p>来看三个真实场景的对比，感受提示词的威力：</p>
+
+    <h3>场景一：写产品文案</h3>
+    <div class="compare">
+      <div class="card card-bad">
+        <div class="label">菜鸟写法</div>
+        <pre>帮我写个咖啡的广告文案</pre>
+        <p style="margin-top:8px;color:#999;font-size:13px;">AI 会给你一段通用的、毫无记忆点的废话文案。</p>
+      </div>
+      <div class="card card-good">
+        <div class="label">高手写法</div>
+        <pre>你是小红书爆款文案写手。
+为一款云南小粒咖啡写文案，目标受众
+是 25-35 岁都市白领，卖点是高海拔
+种植、低酸不苦、精品手冲。
+风格：口语化、有画面感、带情绪共鸣。
+150 字以内，开头用一个加班场景引入。</pre>
+        <p style="margin-top:8px;color:#999;font-size:13px;">AI 会给你一段可以直接发布的高质量文案。</p>
+      </div>
+    </div>
+
+    <h3>场景二：分析数据</h3>
+    <div class="compare">
+      <div class="card card-bad">
+        <div class="label">菜鸟写法</div>
+        <pre>帮我分析一下这个月的销售数据</pre>
+        <p style="margin-top:8px;color:#999;font-size:13px;">AI 不知道你的数据在哪、长什么样、要分析什么维度。</p>
+      </div>
+      <div class="card card-good">
+        <div class="label">高手写法</div>
+        <pre>你是资深数据分析师。
+我有一份月度销售数据（已粘贴在下方），
+包含日期、产品、销售额、渠道四个字段。
+请帮我：
+1. 找出销售额 TOP3 产品
+2. 对比各渠道占比，给出饼图描述
+3. 发现任何异常波动并标注
+输出为 Markdown 表格 + 文字结论。</pre>
+        <p style="margin-top:8px;color:#999;font-size:13px;">AI 会按你要求的格式，给出结构化、可用的分析报告。</p>
+      </div>
+    </div>
+
+    <h3>场景三：学习新知识</h3>
+    <div class="compare">
+      <div class="card card-bad">
+        <div class="label">菜鸟写法</div>
+        <pre>什么是区块链？</pre>
+        <p style="margin-top:8px;color:#999;font-size:13px;">AI 会给你一段百科式的定义，读完还是似懂非懂。</p>
+      </div>
+      <div class="card card-good">
+        <div class="label">高手写法</div>
+        <pre>我是一个没有任何技术背景的大学生。
+请用"买奶茶排队"的生活比喻来解释
+什么是区块链，然后用这个比喻延伸
+解释为什么区块链不可篡改。
+最后留一个思考题让我检验是否理解。</pre>
+        <p style="margin-top:8px;color:#999;font-size:13px;">AI 会用生动的比喻让你真正听懂，还帮你检验学习效果。</p>
+      </div>
+    </div>
+
+    <!-- ===== 5 ===== -->
+    <h2><span class="num">5</span>五个万能提示词模板</h2>
+
+    <p>以下是五个经过验证的高效模板，直接套用即可：</p>
+
+    <h3>模板一：角色扮演法</h3>
+    <pre>你现在是一个【角色，如：资深产品经理】。
+我需要你帮我【任务】。
+背景信息：【补充背景】。
+请以【角色】的专业视角，给出你的建议，
+要求：【格式/风格/长度要求】。</pre>
+
+    <h3>模板二：分步思考法</h3>
+    <pre>请按以下步骤帮我完成【任务】：
+第一步：【拆解子任务1】
+第二步：【拆解子任务2】
+第三步：【拆解子任务3】
+每一步完成后给我确认，我再决定是否继续。</pre>
+
+    <div class="callout c-warn">
+      <div class="t">小技巧</div>
+      在提示词末尾加上 <span class="ic">请一步一步思考</span> 或 <span class="ic">Let's think step by step</span>，AI 的推理质量会显著提升。这在学术上叫<strong>思维链（Chain of Thought）</strong>。
+    </div>
+
+    <h3>模板三：少样本引导法</h3>
+    <pre>请按照以下风格帮我写内容：
+
+示例1：
+输入：iPhone → 输出：苹果公司的旗舰智能手机
+
+示例2：
+输入：AirPods → 输出：苹果无线蓝牙耳机
+
+现在请处理：
+输入：iPad → 输出：？</pre>
+
+    <h3>模板四：约束限制法</h3>
+    <pre>帮我【任务描述】。
+约束条件：
+- 字数限制：【xxx】字以内
+- 必须包含：【关键词/要素】
+- 不能出现：【要避免的内容】
+- 语气风格：【如正式/幽默/简洁】
+- 输出格式：【如表格/列表/段落】</pre>
+
+    <h3>模板五：迭代优化法</h3>
+    <pre>第一轮：先给我一个初版。
+我会告诉你哪里需要调整，
+请你基于我的反馈修改，
+每次修改保持已有优点，只调整指定部分。</pre>
+
+    <!-- ===== 6 ===== -->
+    <h2><span class="num">6</span>高级技巧：让 AI 输出质量翻倍</h2>
+
+    <h3>① 思维链（Chain of Thought）</h3>
+    <p>对于复杂问题，不要让 AI 直接给答案，而是让它<strong>先推理、再回答</strong>。</p>
+    <div class="compare">
+      <div class="card card-bad">
+        <div class="label">直接问</div>
+        <pre>这家公司值得投资吗？</pre>
+      </div>
+      <div class="card card-good">
+        <div class="label">思维链</div>
+        <pre>请从财务、行业、团队三个维度
+逐步分析这家公司，每个维度
+先列出关键数据，再给出判断，
+最后综合三个维度给出结论。</pre>
+      </div>
+    </div>
+
+    <h3>② 自我审查（Self-Critique）</h3>
+    <p>让 AI 先产出，再让它自己挑毛病、自己改：</p>
+    <pre>第一步：请帮我写一段【内容】。
+第二步：写完后，请以严格审稿人的视角
+       审查上面的内容，指出 3 个问题。
+第三步：根据你指出的问题，给出修改版。</pre>
+
+    <h3>③ 多视角碰撞</h3>
+    <p>让 AI 同时扮演不同角色，给出多元观点：</p>
+    <pre>请同时以以下三个角色的视角评价这个方案：
+1. 支持者：列出 3 个优点
+2. 反对者：列出 3 个风险
+3. 中立分析师：给出客观建议</pre>
+
+    <!-- ===== 7 ===== -->
+    <h2><span class="num">7</span>常见误区</h2>
+
+    <div class="callout c-warn">
+      <div class="t">误区一：提示词越长越好</div>
+      不是。冗长的提示词会让 AI 抓不住重点。<strong>清晰 > 详细</strong>，该简短就简短，该详细就详细。
+    </div>
+
+    <div class="callout c-warn">
+      <div class="t">误区二：一次对话搞定一切</div>
+      复杂任务要<strong>分多轮对话</strong>。先让 AI 给框架，确认满意后再让它逐段展开，比一口气要求全做完效果好得多。
+    </div>
+
+    <div class="callout c-warn">
+      <div class="t">误区三：AI 说的一定是对的</div>
+      AI 会"幻觉"——一本正经地编造不存在的事实。涉及<strong>数据、引用、法律条文</strong>时，一定要自己核实。
+    </div>
+
+    <div class="callout c-warn">
+      <div class="t">误区四：用了模板就不用动脑子</div>
+      模板是脚手架，不是拐杖。理解模板背后的<strong>逻辑</strong>，然后根据实际场景灵活变通，才是真正掌握。
+    </div>
+
+    <!-- ===== 8 ===== -->
+    <h2><span class="num">8</span>一张图总结：好提示词的检查清单</h2>
+
+    <table>
+      <tr><th>检查项</th><th>是否满足</th></tr>
+      <tr><td>交代了背景和上下文</td><td>□</td></tr>
+      <tr><td>指定了 AI 的角色身份</td><td>□</td></tr>
+      <tr><td>明确了任务目标</td><td>□</td></tr>
+      <tr><td>说明了输出格式</td><td>□</td></tr>
+      <tr><td>限定了长度/范围</td><td>□</td></tr>
+      <tr><td>给出了参考示例（如有）</td><td>□</td></tr>
+      <tr><td>说明了受众是谁</td><td>□</td></tr>
+      <tr><td>复杂任务是否要求分步思考</td><td>□</td></tr>
+    </table>
+
+    <p>写完提示词后过一遍这个清单，命中率会大幅提升。</p>
+
+    <!-- ===== 9 ===== -->
+    <h2><span class="num">9</span>写在最后</h2>
+
+    <p>提示词工程不是一门需要啃书的理论学科，它更像<strong>游泳</strong>——看再多教程都不如下水试一次。</p>
+
+    <p>从今天开始，每次用 AI 的时候，多花 30 秒想想：我的需求说清楚了吗？背景交代了吗？格式说明了吗？你会发现，同样一个 AI，在你的手里突然变得聪明了很多。</p>
+
+    <div class="quote">
+      "未来的文盲不是不识字的人，而是不会向 AI 提问的人。"
+    </div>
+
+    <p>别当那个文盲。从今天开始，认真对待你输入给 AI 的每一句话。</p>
+
+  </div>
+
+  <div class="footer">
+    提示词工程完全指南 · 2026.08<br>
+    欢迎分享转发，让更多人学会与 AI 高效沟通
+  </div>
+
+</div>
+
+</body>
+</html>
