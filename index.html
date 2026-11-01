@@ -80,7 +80,7 @@
   .path .q { font-size: 15px; font-weight: 550; }
   .path .a { font-size: 14px; color: var(--muted); text-align: right; }
 
-  .minor { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .minor { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 16px; }
   .minor .card { padding: 18px; }
   .minor .card h2 { font-size: 17px; }
 
@@ -192,6 +192,11 @@
       <h2><a href="https://pgy763.github.io/algo-stage/">AlgoStage</a></h2>
       <p>算法逐步可视化：排序、二分、图搜索、回溯、DP，可以拖进度条看每一步发生了什么。</p>
       <a class="go" href="https://pgy763.github.io/algo-stage/">在线试 <span class="arrow">→</span></a>
+    </article>
+    <article class="card">
+      <h2><a href="https://github.com/pgy763/llm-gateway">LLM Gateway</a></h2>
+      <p>多个系统共用 AI 时怎么办：虚拟密钥、降级链、令牌桶限流、按密钥记账，长任务用状态机断点续跑。</p>
+      <a class="go" href="https://github.com/pgy763/llm-gateway">看设计 <span class="arrow">→</span></a>
     </article>
     <article class="card">
       <h2><a href="prompting.html">提示词工程科普</a></h2>
