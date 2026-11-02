@@ -162,10 +162,11 @@
 
   <h2>第四件：从「读」到「拦住」</h2>
   <p>
-    手册解决的是「已经报错了怎么办」。但更省事的是别踩进去。所以挑出最贵的十条
+    手册解决的是「已经报错了怎么办」。但更省事的是别踩进去。所以挑出最贵的十五条
     （事务里调模型、单例 ChatMemory、直接注入 ChatClient、SSE 没设超时、流式里 block、
     <code>text/event-stream</code> 缺 charset、maxTokens 太小、空 catch 吞 IO、
-    HTTP 客户端没配超时、硬编码密钥），做成了一个独立工具：
+    HTTP 客户端没配超时、硬编码密钥，加上每次请求重建 ChatClient / AiServices、
+    循环里逐个调模型、ChatMemoryProvider 写死 id、事务方法返回 Flux），做成了一个独立工具：
     <a href="https://github.com/pgy763/llm-lint">llm-lint</a>。
   </p>
   <p>
@@ -177,8 +178,13 @@
     判断不了就沉默，不猜。
   </p>
   <p>
-    验收方式是 20 个样本文件：<code>samples/bad</code> 里每个文件必须<strong>只</strong>触发它自己那条规则，
-    <code>samples/good</code> 里的修复版必须一条都不报。CI 两个方向都跑 —— 少报会红，乱报也会红。
+    验收方式是 31 个样本文件：<code>samples/bad</code> 里每个文件必须<strong>只</strong>触发它自己那条规则，
+    <code>samples/good</code> 里的修复版必须一条都不报，还有一个文件专门验行内抑制。
+    CI 两个方向都跑 —— 少报会红，乱报也会红。
+  </p>
+  <p>
+    有一条规则就是这么被删掉的：本来想加「<code>new SseEmitter(0L)</code> 没配 onTimeout」，
+    写进正例才发现 0L + 心跳维持是常规写法，会大面积误报。最后整条删掉，而不是加条件硬凑。
   </p>
 
   <h2>验证到什么程度</h2>
@@ -203,8 +209,8 @@
       </tr>
       <tr>
         <td>llm-lint</td>
-        <td>CI：10 个反例各报一条、10 个正例零报告、两方向都卡</td>
-        <td>在 llm-gateway、prompt-ops 两个真实项目上跑过，0 误报</td>
+        <td>CI：15 个反例各报一条、15 个正例零报告、两个方向都卡</td>
+        <td>在 hello-ai-backend（71 个文件）、llm-gateway、prompt-ops 上跑过，0 误报</td>
         <td>样本之外的写法、跨文件类型推断</td>
       </tr>
       <tr>
