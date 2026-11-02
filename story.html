@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>这一套东西是怎么来的 · 蒲公英</title>
+<meta name="description" content="接入手册、踩坑手册、完整项目各自为什么长成这样，验证到什么程度，以及被代码纠正过的几处结论。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="这一套东西是怎么来的">
+<meta property="og:description" content="三份内容各自为什么长成这样，验证到什么程度，以及哪些结论曾被代码纠正。">
+<meta property="og:image" content="https://pgy763.github.io/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #fbfbfd;
+    --card: #ffffff;
+    --ink: #16181d;
+    --muted: #5f6672;
+    --line: #e6e8ee;
+    --accent: #2f6feb;
+    --warn: #b45309;
+    --warn-soft: #fff7ed;
+    --ok: #0f7b52;
+    --ok-soft: #eefaf4;
+    --radius: 14px;
+    --max: 760px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1115; --card: #171a21; --ink: #e8eaee; --muted: #9aa2af;
+      --line: #262b34; --accent: #74a2ff; --warn: #f0b36b; --warn-soft: #2a2117;
+      --ok: #6ee7b7; --ok-soft: #14281f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+                 "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.85; font-size: 16.5px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 22px; }
+
+  nav { padding: 28px 0 0; font-size: 14px; color: var(--muted); }
+  nav a { color: var(--muted); }
+
+  header { padding: 34px 0 10px; }
+  .eyebrow { font-size: 13px; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px; }
+  h1 { font-size: 32px; line-height: 1.35; margin: 0 0 16px; letter-spacing: -.4px; }
+  .lede { font-size: 17px; color: var(--muted); margin: 0 0 8px; }
+
+  h2 {
+    font-size: 21px; margin: 52px 0 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--line); letter-spacing: -.2px;
+  }
+  h3 { font-size: 17px; margin: 30px 0 8px; }
+  p { margin: 0 0 15px; }
+  strong { font-weight: 650; }
+  ul { padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 6px; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 88%; background: rgba(127,127,127,.12); padding: 1px 5px; border-radius: 5px;
+  }
+
+  .quote {
+    border-left: 3px solid var(--accent); padding: 2px 0 2px 18px;
+    margin: 22px 0; color: var(--muted); font-size: 16px;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 600; color: var(--muted); font-size: 13px; letter-spacing: .02em; }
+  td:first-child { white-space: nowrap; }
+
+  .finding {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 18px; margin: 0 0 12px;
+  }
+  .finding .t { font-weight: 650; margin-bottom: 4px; font-size: 15.5px; }
+  .finding p { margin: 0; font-size: 15px; color: var(--muted); }
+  .finding code { font-size: 85%; }
+
+  .note {
+    padding: 16px 18px; border-radius: var(--radius); font-size: 15px;
+    background: var(--warn-soft); color: var(--warn); margin: 20px 0;
+  }
+  .note b { color: var(--warn); }
+
+  footer {
+    margin: 56px 0 0; padding: 26px 0 60px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 14px; display: flex; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+  }
+  @media (max-width: 620px) {
+    h1 { font-size: 26px; }
+    table { font-size: 13.5px; }
+    th, td { padding: 8px 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav><a href="/">← 回入口</a></nav>
+
+  <header>
+    <div class="eyebrow">案例 · 2026-11</div>
+    <h1>这一套东西是怎么来的</h1>
+    <p class="lede">三份内容各自为什么长成这样、验证到什么程度、哪些结论被代码纠正过。</p>
+    <p class="lede">写下来是因为：一个项目对自身边界的描述，比它的功能列表更能说明问题。</p>
+  </header>
+
+  <h2>起点</h2>
+  <p>
+    我先写的是书。动机很具体：照着文档把第一个接口调通之后，真正的问题才开始——
+    流式输出为什么在网关后面变成一次性返回、工具调用为什么偶发参数解析失败、
+    超时该设多少、重试为什么会让费用翻倍。
+  </p>
+  <p>
+    这些问题在「快速开始」里都看不到，因为那部分文档只需要证明<strong>它能跑</strong>。
+    所以第一件事是补「能调通」和「能上生产」之间那段。
+  </p>
+
+  <h2>三份内容，三种形态，各自的取舍</h2>
+
+  <h3>接入手册：先有能跑的模块，才有那一章</h3>
+  <p>
+    15 章，配 12 个可运行的 Spring Boot 模块。约束是自己定的：
+    <strong>没有可运行示例的章节不写</strong>。因为纯文字的接入教程已经够多了，缺的是「跑起来是这样」。
+  </p>
+  <p>
+    范围上做了收缩：只讲 Spring AI 和 LangChain4j，不追求覆盖所有框架。
+    选型对比单独放在第一章，配三种可运行的实现，让读者自己比较，而不是听结论。
+  </p>
+
+  <h3>踩坑手册：按报错索引，不按知识体系</h3>
+  <p>
+    51 条。组织方式和书相反——不按章节顺序，按<strong>报错关键词</strong>。
+    理由很实际：半夜查错误的时候，没有人会先通读目录。
+  </p>
+  <p>
+    每条固定三段：<code>报错原文</code>（或现象）、<code>为什么</code>、<code>怎么改</code>。
+    配图的处理也定了一条规矩：能拿到真机截图的用真机截图，
+    拿不到的按该条报错原文<strong>渲染</strong>成图，并在条目里标注——
+    不把渲染图冒充成终端截图，这种便宜占了会让整份材料的可信度打折。
+  </p>
+
+  <h3>完整项目：把限制写出来，而不是藏起来</h3>
+  <p>
+    shopkeeper-agent 是「怎么做」的那一份：FastAPI + LangGraph，12 个节点，
+    三路异构召回，生成—校验—纠错闭环。
+  </p>
+  <p>
+    它有一页 <a href="https://github.com/pgy763/shopkeeper-agent/blob/main/docs/limitations.md">已知限制</a>，
+    列的是没有鉴权、没有限流、SQL 直接执行、重建不幂等这类问题。
+    写这一页的动机不是自曝，而是：<strong>不说清楚边界，读者会以为它能上线</strong>，
+    然后在真正要用的时候发现不是——那比没有这个项目更糟。
+  </p>
+
+  <h2>验证到什么程度</h2>
+  <p>这是我认为最该交代的一张表。绿色勾不是重点，最后一列才是：</p>
+
+  <table>
+    <thead>
+      <tr><th>项目</th><th>自动验证</th><th>逐条核对</th><th>没有验证</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>接入手册</td>
+        <td>CI 构建 12 个模块 + 站点部署</td>
+        <td>每章示例在本机跑通</td>
+        <td>换厂商、换模型的差异</td>
+      </tr>
+      <tr>
+        <td>踩坑手册</td>
+        <td>索引脚本生成 51 条、站内搜索、部署</td>
+        <td>每条对照真实报错与相关代码</td>
+        <td>版本差异（条目里已标注「措辞可能因版本而异」）</td>
+      </tr>
+      <tr>
+        <td>shopkeeper</td>
+        <td>无 CI、无测试</td>
+        <td>文档里每条结论对着代码读过</td>
+        <td>端到端问数（需要 1.3 G 向量模型和一个可用的 key）</td>
+      </tr>
+      <tr>
+        <td>llm-gateway</td>
+        <td>CI：13 个状态机测试</td>
+        <td>本地 <code>mvn verify</code></td>
+        <td>HTTP 层、限流、降级链</td>
+      </tr>
+      <tr>
+        <td>prompt-ops</td>
+        <td>CI：仅编译打包</td>
+        <td>本地 <code>mvn package</code></td>
+        <td>12 个接口没有任何单元测试</td>
+      </tr>
+      <tr>
+        <td>Blog-</td>
+        <td>无 CI</td>
+        <td>本地 <code>mvn package</code> 通过</td>
+        <td>运行期行为（需要 MySQL / Redis）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="quote">
+    「有 CI」不等于「测过」。prompt-ops 的 CI 只保证能编译，
+    它 12 个接口的正确性目前完全依赖人读代码。
+  </p>
+
+  <h2>被代码纠正过的几处</h2>
+  <p>
+    写文档最大的副产品是：不得不逐行对代码，然后就发现原来的说法是错的。
+    这几条都改回了文档里：
+  </p>
+
+  <div class="finding">
+    <div class="t">「字段变了重跑一次就好」是错的</div>
+    <p>
+      shopkeeper 的三处存储重建行为完全不同：Meta 表主键是固定的 <code>表名.列名</code>，重跑直接主键冲突；
+      Qdrant 的向量点 id 是 <code>uuid4()</code>，重跑不会覆盖而是累积重复；
+      只有 Elasticsearch 的文档 id 是确定值，天然幂等。原来的 README 一句话带过，会让人踩坑。
+    </p>
+  </div>
+
+  <div class="finding">
+    <div class="t">「校验 SQL」节点在 SQL 语法错误时也上报 success</div>
+    <p>
+      因为它上报的是「校验这个动作执行成功了」，而不是「被校验的 SQL 正确」。
+      所以前端不能拿这个事件判断 SQL 对不对，终态只能看 <code>result</code> / <code>error</code>。
+    </p>
+  </div>
+
+  <div class="finding">
+    <div class="t">配置里写了，代码里没读</div>
+    <p>
+      <code>es.index_name: data_agent</code> 改了不生效——代码里硬编码了 <code>value_index</code>。
+      这类「配置项看起来能改、实际不起作用」的问题，只读 README 永远发现不了。
+    </p>
+  </div>
+
+  <div class="finding">
+    <div class="t">README 写着「需要 JDK 17+ 和一个 JDK」</div>
+    <p>句子重复。小问题，但它暴露的是：这份 README 写完没有回头读过一遍。</p>
+  </div>
+
+  <div class="finding">
+    <div class="t">CI 第一次跑就挂了：退出码 126</div>
+    <p>
+      llm-gateway 的 <code>mvnw</code> 是在 Windows 上提交的，索引里记的是 <code>100644</code>，
+      Linux Runner 上执行不了。修法是把权限位写进仓库（<code>git update-index --chmod=+x</code>），
+      而不是让每个人本地 <code>chmod</code>。
+    </p>
+  </div>
+
+  <div class="finding">
+    <div class="t">站点仓库名少了一个前缀，根路径一直是 404</div>
+    <p>
+      用户站点必须叫 <code>&lt;用户名&gt;.github.io</code>。原来的仓库叫 <code>.github.io</code>，
+      所以 <code>https://pgy763.github.io/</code> 根本不存在——直到给仓库改名。
+    </p>
+  </div>
+
+  <h2>这套东西不是什么</h2>
+  <ul>
+    <li><strong>不是生产代码。</strong>没有鉴权、没有限流、没有灰度，写它是为了把过程讲清楚。</li>
+    <li><strong>没有真实用户数据。</strong>shopkeeper 的示例库是造的，数字不对应任何真实业务。</li>
+    <li><strong>不是 benchmark。</strong>没有任何「方案 A 比方案 B 快 30%」这类量化结论，因为我没做过对照实验。</li>
+    <li><strong>结论有版本边界。</strong>AI 生态半年一变，所有涉及具体行为的地方都只在这些版本上验证过。</li>
+  </ul>
+
+  <div class="note">
+    <b>为什么要把这些写出来。</b>
+    一份材料如果只讲它有多好，读者没法判断该不该信；
+    讲清楚它在哪一步停下、哪一步没验证，反而更容易被正确使用。
+  </div>
+
+  <h2>接下来读什么</h2>
+  <p>按你现在的处境选：</p>
+  <ul>
+    <li>要接第一个接口 → <a href="https://pgy763.github.io/hello-ai-backend/">接入手册</a></li>
+    <li>已经在报错 → <a href="https://pgy763.github.io/llm-dev-pitfalls/all">按关键词搜手册</a></li>
+    <li>想看完整项目 → <a href="https://github.com/pgy763/shopkeeper-agent">shopkeeper-agent</a></li>
+  </ul>
+
+  <footer>
+    <div><a href="/">← 回入口</a></div>
+    <div>蒲公英 · 最近更新 2026-11</div>
+  </footer>
+
+</div>
+</body>
+</html>
